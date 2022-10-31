@@ -51,7 +51,7 @@ class SolarWindsProvider implements IPAMProvider {
 
     MorpheusContext morpheusContext
     Plugin plugin
-
+    final static String lockName = 'solarwinds.ipam'
     final String startIpReservationPath = "/Solarwinds/InformationService/v3/json/Invoke/IPAM.SubnetManagement/StartIpReservation"
     final String finishIpReservationPath = "/Solarwinds/InformationService/v3/json/Invoke/IPAM.SubnetManagement/FinishIpReservation"
     final String changeIpStatusPath = "/Solarwinds/InformationService/v3/json/Invoke/IPAM.SubnetManagement/ChangeIpStatus"
@@ -428,7 +428,9 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     ServiceResponse createHostRecord(NetworkPoolServer poolServer, NetworkPool networkPool, NetworkPoolIp networkPoolIp, NetworkDomain domain, Boolean createARecord, Boolean createPtrRecord) {
         HttpApiClient client = new HttpApiClient()
+        def lock
         try {
+            lock = morpheusContext.acquireLock(lockName + ".${networkPool.id}",[timeout: 60l * 1000l]).blockingGet()
             def hostname = networkPoolIp.hostname
             if (domain && hostname && !hostname.endsWith(domain.name)) {
                 hostname = "${hostname}.${domain.name}"
@@ -493,6 +495,9 @@ class SolarWindsProvider implements IPAMProvider {
             }
         } finally {
             client.shutdownClient()
+            if(lock) {
+                morpheusContext.releaseLock(lockName + ".${networkPool.id}",[lock: lock]).subscribe().dispose()
+            }
         }
     }
 
