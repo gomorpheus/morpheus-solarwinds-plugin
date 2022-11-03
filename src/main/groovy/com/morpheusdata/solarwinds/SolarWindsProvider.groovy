@@ -591,7 +591,7 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     List<OptionType> getIntegrationOptionTypes() {
         return [
-                new OptionType(code: 'networkPoolServer.solarwindsipam.serviceUrl', name: 'Service URL', inputType: OptionType.InputType.TEXT, fieldName: 'serviceUrl', fieldLabel: 'API Url', fieldContext: 'domain', placeHolder: 'https://x.x.x.x:17778', helpBlock: 'gomorpheus.help.serviceUrl', displayOrder: 0),
+                new OptionType(code: 'networkPoolServer.solarwindsipam.serviceUrl', name: 'Service URL', inputType: OptionType.InputType.TEXT, fieldName: 'serviceUrl', fieldLabel: 'API Url', fieldContext: 'domain', placeHolder: 'https://x.x.x.x:17778', required: true, helpBlock: 'gomorpheus.help.serviceUrl', displayOrder: 0),
                 new OptionType(code: 'networkPoolServer.solarwindsipam.credentials', name: 'Credentials', inputType: OptionType.InputType.CREDENTIAL, fieldName: 'type', fieldLabel: 'Credentials', fieldContext: 'credential', required: true, displayOrder: 1, defaultValue: 'local',optionSource: 'credentials',config: '{"credentialTypes":["username-password"]}'),
                 new OptionType(code: 'networkPoolServer.solarwindsipam.serviceUsername', name: 'Service Username', inputType: OptionType.InputType.TEXT, fieldName: 'serviceUsername', fieldLabel: 'Username', fieldContext: 'domain', displayOrder: 2, localCredential: true),
                 new OptionType(code: 'networkPoolServer.solarwindsipam.servicePassword', name: 'Service Password', inputType: OptionType.InputType.PASSWORD, fieldName: 'servicePassword', fieldLabel: 'Password', fieldContext: 'domain', displayOrder: 3, localCredential: true),
