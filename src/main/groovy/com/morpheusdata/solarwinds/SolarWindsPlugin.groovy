@@ -34,7 +34,7 @@ class SolarWindsPlugin extends Plugin {
 	void initialize() {
 		 SolarWindsProvider solarWindsProvider = new SolarWindsProvider(this, morpheus)
 		 this.pluginProviders.put("solarwindsipam", solarWindsProvider)
-		 this.setName("SolarWinds IPAM")
+		 this.setName("SolarWinds")
 	}
 
 	/**

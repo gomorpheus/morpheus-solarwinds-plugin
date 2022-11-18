@@ -648,7 +648,7 @@ class SolarWindsProvider implements IPAMProvider {
      */
     @Override
     String getName() {
-        return "SolarWinds IPAM"
+        return "SolarWinds"
     }
 
 
