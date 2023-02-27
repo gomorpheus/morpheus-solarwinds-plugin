@@ -74,7 +74,7 @@ jar {
 				'Morpheus-Color': '#ffffff',
 				'Morpheus-Labels': 'Plugin, Networking, Network,IPAM, SolarWinds',
 				'Morpheus-Repo': 'https://github.com/gomorpheus/morpheus-solarwinds-plugin',
-				'Morpheus-Min-Appliance-Version': "5.5.2"
+				'Morpheus-Min-Appliance-Version': "6.0.0"
 		)
 	}
 }

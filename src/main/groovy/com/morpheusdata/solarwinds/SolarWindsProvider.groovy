@@ -77,7 +77,28 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     ServiceResponse verifyNetworkPoolServer(NetworkPoolServer poolServer, Map opts) {
         ServiceResponse<NetworkPoolServer> rtn = ServiceResponse.error()
+
+        rtn.errors = [:]
+        if(!poolServer.name || poolServer.name == ''){
+            rtn.errors['name'] = 'name is required'
+        }
+        if(!poolServer.serviceUrl || poolServer.serviceUrl == ''){
+            rtn.errors['serviceUrl'] = 'Solarwinds API URL is required'
+        }
+
+        if((!poolServer.serviceUsername || poolServer.serviceUsername == '') && (!poolServer.credentialData?.username || poolServer.credentialData?.username == '')){
+            rtn.errors['serviceUsername'] = 'username is required'
+        }
+        if((!poolServer.servicePassword || poolServer.servicePassword == '') && (!poolServer.credentialData?.password || poolServer.credentialData?.password == '')){
+            rtn.errors['servicePassword'] = 'password is required'
+        }
+
         rtn.data = poolServer
+        if(rtn.errors.size() > 0){
+            rtn.success = false
+            return rtn //
+        }
+
         HttpApiClient solarWindsClient = new HttpApiClient()
         try {
             def apiUrl = poolServer.serviceUrl
