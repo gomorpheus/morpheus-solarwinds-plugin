@@ -351,7 +351,7 @@ class SolarWindsProvider implements IPAMProvider {
             }
         }.doOnError{ e ->
             log.error("cacheIpRecords error: ${e}", e)
-        }.subscribe()
+        }.blockingSubscribe()
 
     }
 
