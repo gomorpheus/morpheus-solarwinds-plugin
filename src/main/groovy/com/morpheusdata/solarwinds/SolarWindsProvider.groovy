@@ -318,9 +318,9 @@ class SolarWindsProvider implements IPAMProvider {
 
     // cacheIpAddressRecords
     void cacheIpAddressRecords(HttpApiClient client, NetworkPoolServer poolServer) {
-        morpheus.network.pool.listIdentityProjections(poolServer.id).buffer(50).flatMap { Collection<NetworkPoolIdentityProjection> poolIdents ->
+        morpheus.network.pool.listIdentityProjections(poolServer.id).buffer(50).concatMap { Collection<NetworkPoolIdentityProjection> poolIdents ->
             return morpheus.network.pool.listById(poolIdents.collect{it.id})
-        }.flatMap { NetworkPool pool ->
+        }.concatMap { NetworkPool pool ->
             def listResults = listIpNodes(client,poolServer,pool.externalId)
 
 
