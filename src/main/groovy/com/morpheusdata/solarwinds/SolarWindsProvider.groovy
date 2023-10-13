@@ -35,9 +35,9 @@ import com.morpheusdata.model.projection.NetworkPoolIpIdentityProjection
 import com.morpheusdata.response.ServiceResponse
 import groovy.json.JsonOutput
 import groovy.util.logging.Slf4j
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import org.apache.commons.net.util.SubnetUtils
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * The IPAM / DNS Provider implementation for Solarwinds IPAM
@@ -318,9 +318,9 @@ class SolarWindsProvider implements IPAMProvider {
 
     // cacheIpAddressRecords
     void cacheIpAddressRecords(HttpApiClient client, NetworkPoolServer poolServer) {
-        morpheus.network.pool.listIdentityProjections(poolServer.id).buffer(50).flatMap { Collection<NetworkPoolIdentityProjection> poolIdents ->
+        morpheus.network.pool.listIdentityProjections(poolServer.id).buffer(50).concatMap { Collection<NetworkPoolIdentityProjection> poolIdents ->
             return morpheus.network.pool.listById(poolIdents.collect{it.id})
-        }.flatMap { NetworkPool pool ->
+        }.concatMap { NetworkPool pool ->
             def listResults = listIpNodes(client,poolServer,pool.externalId)
 
 
