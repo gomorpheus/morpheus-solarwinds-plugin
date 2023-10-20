@@ -196,13 +196,13 @@ class SolarWindsProvider implements IPAMProvider {
 
                 if(!testResults.success) {
                     //NOTE invalidLogin was only ever set to false.
-                    morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.error, 'error calling SolarWinds').blockingGet()
+                    morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.error, 'error calling SolarWinds').subscribe().dispose()
                 } else {
 
-                    morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.syncing).blockingGet()
+                    morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.syncing).subscribe().dispose()
                 }
             } else {
-                morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.error, 'SolarWinds api not reachable')
+                morpheus.network.updateNetworkPoolServerStatus(poolServer, AccountIntegration.Status.error, 'SolarWinds api not reachable').subscribe().dispose()
             }
             Date now = new Date()
             if(testResults?.success) {
