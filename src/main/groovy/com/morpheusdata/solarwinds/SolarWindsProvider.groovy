@@ -100,6 +100,8 @@ class SolarWindsProvider implements IPAMProvider {
         }
 
         HttpApiClient solarWindsClient = new HttpApiClient()
+        def networkProxy = morpheusContext.async.setting.getGlobalNetworkProxy()
+        solarWindsClient.networkProxy = networkProxy
         try {
             def apiUrl = poolServer.serviceUrl
             boolean hostOnline = false
@@ -107,7 +109,7 @@ class SolarWindsProvider implements IPAMProvider {
                 def apiUrlObj = new URL(apiUrl)
                 def apiHost = apiUrlObj.host
                 def apiPort = apiUrlObj.port > 0 ? apiUrlObj.port : (apiUrlObj?.protocol?.toLowerCase() == 'https' ? 443 : 80)
-                hostOnline = ConnectionUtils.testHostConnectivity(apiHost, apiPort, false, true, null)
+                hostOnline = ConnectionUtils.testHostConnectivity(apiHost, apiPort, false, true, networkProxy)
             } catch(e) {
                 log.error("Error parsing URL {}", apiUrl, e)
             }
@@ -182,12 +184,14 @@ class SolarWindsProvider implements IPAMProvider {
         log.debug("refreshNetworkPoolServer: {}", poolServer.dump())
         HttpApiClient solarWindsClient = new HttpApiClient()
         solarWindsClient.throttleRate = poolServer.serviceThrottleRate
+        def networkProxy = morpheusContext.async.setting.getGlobalNetworkProxy()
+        solarWindsClient.networkProxy = networkProxy
         try {
             def apiUrl = poolServer.serviceUrl
             def apiUrlObj = new URL(apiUrl)
             def apiHost = apiUrlObj.host
             def apiPort = apiUrlObj.port > 0 ? apiUrlObj.port : (apiUrlObj?.protocol?.toLowerCase() == 'https' ? 443 : 80)
-            def hostOnline = ConnectionUtils.testHostConnectivity(apiHost, apiPort, false, true, null)
+            def hostOnline = ConnectionUtils.testHostConnectivity(apiHost, apiPort, false, true, networkProxy)
             log.debug("online: {} - {}", apiHost, hostOnline)
             def testResults = null
             // Promise
@@ -449,6 +453,7 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     ServiceResponse createHostRecord(NetworkPoolServer poolServer, NetworkPool networkPool, NetworkPoolIp networkPoolIp, NetworkDomain domain, Boolean createARecord, Boolean createPtrRecord) {
         HttpApiClient client = new HttpApiClient()
+        client.networkProxy = morpheusContext.async.setting.getGlobalNetworkProxy()
         def lock
         try {
             lock = morpheusContext.acquireLock(lockName + ".${networkPool.id}",[timeout: 60l * 1000l]).blockingGet()
@@ -533,6 +538,7 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     ServiceResponse updateHostRecord(NetworkPoolServer poolServer, NetworkPool networkPool, NetworkPoolIp networkPoolIp) {
         HttpApiClient client = new HttpApiClient()
+        client.networkProxy = morpheusContext.async.setting.getGlobalNetworkProxy()
         try {
             def results
             HttpApiClient.RequestOptions apiOpts
@@ -580,6 +586,7 @@ class SolarWindsProvider implements IPAMProvider {
     @Override
     ServiceResponse deleteHostRecord(NetworkPool networkPool, NetworkPoolIp poolIp, Boolean deleteAssociatedRecords) {
         HttpApiClient client = new HttpApiClient()
+        client.networkProxy = morpheusContext.async.setting.getGlobalNetworkProxy()
         def poolServer = morpheus.network.getPoolServerById(networkPool.poolServer.id).blockingGet()
         try {
             def results = client.callJsonApi(poolServer.serviceUrl,changeIpStatusPath,poolServer.credentialData?.username as String  ?: poolServer.serviceUsername, poolServer.credentialData?.password as String  ?: poolServer.servicePassword, new HttpApiClient.RequestOptions([body: [poolIp.ipAddress,'Available']]),'POST')
